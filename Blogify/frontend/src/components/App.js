@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {render} from 'react-dom';
+import Navbar from "./Navbar";
 
 export default class App extends Component {
     constructor(props) {
@@ -9,7 +10,8 @@ export default class App extends Component {
     render() {
         return (
             <div>
-                this is a React component
+                <Navbar/>
+                this is a React components
                 <h1>using Django </h1>
             </div>
         );
