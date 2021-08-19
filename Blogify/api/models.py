@@ -9,6 +9,14 @@ class Category(models.Model):
     parent = models.ForeignKey("self", on_delete=models.PROTECT, blank=True, null=True)
     show_in_navbar = models.BooleanField(default=True)
 
+    def calc_children(self):
+        if Category.objects.all().filter(parent=self.id):
+            return [{"category_title": child.category_title, "id": child.id, 'show_in_navbar': child.show_in_navbar,
+                     "children": child.calc_children()} for child in Category.objects.all().filter(parent=self.id)]
+        else:
+            return None
+        # return [child.id for child in Category.objects.all().filter(parent=self.id)]
+
     def __str__(self):
         if self.parent:
             return Category.get_sub(self)

@@ -1,57 +1,86 @@
 import React, {Component} from 'react';
+import Row, {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
+import Col from "react-bootstrap";
+import Menu from "./Menu";
 
-class Navbar extends Component {
+class NavbarComponent extends Component {
     constructor(props) {
         super(props);
+        this.GenerateCategory = this.GenerateCategory.bind(this)
+        this.nav_item = <div className=" border-1 mx-2 bg-info">something is here</div>
+        this.label = <a href="/home">home</a>
+        fetch('http://127.0.0.1:8000/api/').then(res => res.json()).then((result) => {
+            this.setState({categories: result})
+            this.GenerateCategory()
+        })
+    }
+
+    state = {
+        something: this.props.something,
+        categories: []
+
+    };
+
+
+    GenerateCategory() {
+        for (let category of this.state.categories) {
+            if (category.parent == null) {
+                let index = this.state.categories.indexOf(category)
+                this.setState({"categories": this.state.categories.splice(index, 1)})
+            }
+        }
 
     }
 
-    state ={
-        something: this.props.something
+    classifyCategory() {
+
     }
+
+
+    // GenerateCategory(category) {
+    //     const category_nav = category.map(function (value, index) {
+    //             if (value.parent == null) {
+    //                 return <div><a id={value.id} className="dropdown-item" key={index}>{value.category_title}</a>
+    //                     <div>
+    //
+    //                     </div>
+    //
+    //                     </div>
+    //             } else {
+    //                 return null
+    //             }
+    //             ;
+    //         }
+    //     );
+    //
+    //     return category_nav
+    // };
 
     render() {
         return (
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <a className="navbar-brand" href="#">{this.state.something}</a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
+            <ul>
+                {console.log(this.state.categories)}
+                {this.state.categories.map((category, index) => {
+                return (
+                    <li  key={index}> {category.category_title}
 
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item active">
-                            <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Link</a>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Dropdown
-                            </a>
-                            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a className="dropdown-item" href="#">Action</a>
-                                <a className="dropdown-item" href="#">Another action</a>
-                                <div className="dropdown-divider"></div>
-                                <a className="dropdown-item" href="#">Something else here</a>
-                            </div>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link disabled" href="#">Disabled</a>
-                        </li>
-                    </ul>
-                    <form className="form-inline my-2 my-lg-0">
-                        <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-                            <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                    </form>
-                </div>
-            </nav>
+                    {/*<Menu children_category={category.children}/>*/}
+                    {category.children && <Menu children_category={category.children} />}
+                    </li>
+
+                )
+            })}
+            </ul>
+
         );
     }
+
+
+    componentDidMount() {
+
+    }
+
+
 }
 
-export default Navbar;
+export default NavbarComponent;

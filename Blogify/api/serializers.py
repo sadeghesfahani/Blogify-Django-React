@@ -5,4 +5,6 @@ from rest_framework import serializers
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = ['category_title', 'show_in_navbar', 'children', 'parent']
+
+    children = serializers.ListField(source='calc_children')
