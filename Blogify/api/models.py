@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
@@ -8,14 +9,31 @@ class Category(models.Model):
     category_description = models.CharField(max_length=2500, blank=True, default="")
     parent = models.ForeignKey("self", on_delete=models.PROTECT, blank=True, null=True)
     show_in_navbar = models.BooleanField(default=True)
+    level = models.IntegerField(default=1, blank=True)
 
+    # children are returned as a dictionary for using in serializer
     def calc_children(self):
-        if Category.objects.all().filter(parent=self.id):
+        categories = Category.objects.all().filter(parent=self.id)
+        if categories:
             return [{"category_title": child.category_title, "id": child.id, 'show_in_navbar': child.show_in_navbar,
-                     "children": child.calc_children()} for child in Category.objects.all().filter(parent=self.id)]
+                     "children": child.calc_children(), "level": child.level, "nothing": child.increment_child_level()}
+                    for child in
+                    categories]
         else:
             return None
-        # return [child.id for child in Category.objects.all().filter(parent=self.id)]
+
+    # level of each children is determined here
+    def increment_child_level(self):
+
+        try:
+            parent = Category.objects.get(id=self.parent.id)
+
+            self.level = parent.level + 1
+            self.save()
+            return 0
+        except ObjectDoesNotExist:
+            print("without parent", self.category_title)
+            return 0
 
     def __str__(self):
         if self.parent:
@@ -23,7 +41,7 @@ class Category(models.Model):
         else:
             return f"{self.category_title}"
 
-    temp_list = list()
+    temp_list=list()
 
     @staticmethod
     def get_sub(obj):

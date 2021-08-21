@@ -8,3 +8,4 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['category_title', 'show_in_navbar', 'children', 'parent']
 
     children = serializers.ListField(source='calc_children')
+

@@ -11,9 +11,8 @@ export default class App extends Component {
     render() {
         return (
             <div>
-                <NavbarComponent something='hi'/>
-                this is a React components
-                <h1>using Django </h1>
+                <NavbarComponent sitename='بلاگیفای'/>
+                
             </div>
         );
     }
